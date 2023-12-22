@@ -7,7 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import postgresConfig from './config/postgres.config';
 import jwtConfig from './config/jwt.config';
 import swaggerConfig from './config/swagger.config';
-import { LoggerMiddleware } from './common/interceptor/logger.middleware';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
 
 @Module({
   providers: [Logger],

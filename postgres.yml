@@ -1,0 +1,19 @@
+version: '3.1'
+
+volumes:
+  mictroservice_db_data:
+
+services:
+  postgres:
+    image: postgres:14.7
+    container_name: postgres
+    # 5432로 포워딩 할 경우 host os에 설치된 postgres와 충돌할 수 있으므로 host에 설치된 postgres를 내려야함
+    ports:
+      - '5434:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - microservice_db_data:/var/lib/postgresql/data
+    restart: always

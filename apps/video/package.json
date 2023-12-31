@@ -17,7 +17,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/nestjs-microservice/test/jest-e2e.json"
+    "test:e2e": "jest --config ./apps/nestjs-microservice/test/jest-e2e.json",
+    "microservice": "cp ./package.json ./apps/api-gateway && cp ./package.json ./apps/user && cp ./package.json ./apps/video && cp ./package.json ./apps/analytics && docker-compose -p microservice down && microservice up --remove-orphans",
+    "postgres": "docker-compose -f postgres.yml -p postgres down && docker-compose -f postgres.yml -p postgres up --remove-prphans"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

@@ -25,3 +25,84 @@
 
 - 초기 세팅하는 데 상대적으로 많은 기술 습득과 노하우가 필요
 - 하지만 최근 많은 도구들이 발전하면서 비용이 낮아지는 추세
+
+# Step-2
+
+## NestJS 모노레포 - Microservice 구성
+
+```bash
+$ npm install -g @nestjs/cli
+$ nest new microservice
+$ cd microservice
+$ npm run start:dev
+$ yarn start:dev
+$ nest generate app api-gateway
+
+$ rm -rf microservice
+
+$ nest generate app user
+$ nest generate app video
+$ nest generate app analytics
+
+$ yarn start user
+$ yarn start video
+$ yarn start analytics
+```
+
+## Docker
+
+- 각 마이크로서비스별로 도커 파일 작성
+- 완전히 분리된 환경에서 각각의 마이크로서비스를 띄울 수 있음
+
+```bash
+$ cd /apps/api-gateway
+$ docker build -t api-gateway
+$ docker run -p 3000:3000 --name api-gateway api-gateway
+```
+
+# Step-3
+
+## Docker Compose
+
+- 여러 마이크로서비스 도커 컨테이너를 로컬에서 관리하는 것이 가능
+
+### 마이크로서비스를 컨테이너로 실행
+
+- docker-compose.yml
+
+```bash
+$ yarn run microservice
+```
+
+### Postgres
+
+- postgres.yml
+
+```bash
+$ yarn run postgres
+```
+
+- 유저, DB 생성
+
+```bash
+# 도커 컨테이너의 bash 실행
+$ docker exec -it postgres /bin/bash
+
+# 유저 생성
+$ createuser -d -P -U postgres -h localhost -p 5432 api-gateway
+$ createuser -d -P -U postgres -h localhost -p 5432 user-service
+$ createuser -d -P -U postgres -h localhost -p 5432 video-service
+$ createuser -d -P -U postgres -h localhost -p 5432 analytics-service
+
+# Enter password for new role: 생성할 유저의 비밀번호 입력
+# Enter it again: 생성할 유저의 비밀번호 입력
+# Password: 마스터 계정의 비밀번호 입력
+
+# DB 생성
+$ createdb -U api-gateway -h localhost -p 5432 -E UTF8 api-gateway
+$ createdb -U user-service -h localhost -p 5432 -E UTF8 user-service
+$ createdb -U video-service -h localhost -p 5432 -E UTF8 video-service
+$ createdb -U analytics-service -h localhost -p 5432 -E UTF8 analytics-service
+# Password: 해당 유저의 비밀번호 입력
+
+```

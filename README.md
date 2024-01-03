@@ -104,5 +104,27 @@ $ createdb -U user-service -h localhost -p 5432 -E UTF8 user-service
 $ createdb -U video-service -h localhost -p 5432 -E UTF8 video-service
 $ createdb -U analytics-service -h localhost -p 5432 -E UTF8 analytics-service
 # Password: 해당 유저의 비밀번호 입력
+```
 
+# Step-4
+
+## Sync vs Async
+
+- 동기 요청과 비동기 요청의 차이는 결국 요청의 응답을 기다리느냐 여부
+
+## NestJS에서 메아크로서비스간의 통신
+
+- transporter라고 하는 built-in transport 레이어를 활용하여 데이터를 주고 받음
+- 동기 방식인 request-response, 비동기 방식인 event-based
+- TCP transporter를 활용하여 동기 방식 구현, kafka transporter를 활용하여 비동기 방식 구현
+
+# Step-5
+
+## Kafka
+
+- 메시지 브로커
+- 도커 컴포즈로 실행
+
+```bash
+$ yarn run kafka
 ```

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entity/user.entity';
 import { Repository } from 'typeorm';
@@ -20,6 +20,16 @@ export class UserService {
 
     const userEntity = this.userRepositry.create({ email, password: hash });
     const user = await this.userRepositry.save(userEntity);
+
+    return user;
+  }
+
+  async validate(email: string, password: string) {
+    const user = await this.findOneByEmail(email);
+    if (!user) throw new UnauthorizedException();
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) throw new UnauthorizedException();
 
     return user;
   }

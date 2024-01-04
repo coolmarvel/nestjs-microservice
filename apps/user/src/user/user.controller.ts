@@ -19,4 +19,11 @@ export class UserController {
 
     return { id: user.id };
   }
+
+  @MessagePattern({ cmd: 'validate' })
+  async validate({ email, password }: { email: string; password: string }): Promise<{ id: string }> {
+    const { id } = await this.userService.validate(email, password);
+
+    return { id: id };
+  }
 }

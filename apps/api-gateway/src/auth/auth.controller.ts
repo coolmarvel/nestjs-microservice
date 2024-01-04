@@ -1,24 +1,25 @@
-import { BadRequestException, Body, Controller, Headers, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiExtraModels, ApiTags } from '@nestjs/swagger';
-import { RefreshResDto, SigninResDto, SingupResDto } from './dto/res.dto';
+import { Controller, Post, Body, Headers, BadRequestException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiPostResponse } from '../common/decorator/swagger.decorator';
+import { ApiBearerAuth, ApiExtraModels, ApiTags } from '@nestjs/swagger';
 import { SigninReqDto, SignupReqDto } from './dto/req.dto';
+import { RefreshResDto, SigninResDto, SignupResDto } from './dto/res.dto';
+import { ApiPostResponse } from '../common/decorator/swagger.decorator';
 import { Public } from '../common/decorator/public.decorator';
-import { User, UserAfterAuth } from '../common/decorator/user.decorator';
+import { User } from '../common/decorator/user.decorator';
+import { UserAfterAuth } from '../common/decorator/user.decorator';
 
 @ApiTags('Auth')
-@ApiExtraModels(SingupResDto, SigninResDto, RefreshResDto)
+@ApiExtraModels(SignupResDto, SigninResDto, RefreshResDto)
 @Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiPostResponse(SingupResDto)
+  @ApiPostResponse(SignupResDto)
   @Public()
   @Post('signup')
-  async sinup(@Body() { email, password, passwordConfirm }: SignupReqDto): Promise<SingupResDto> {
+  async signup(@Body() { email, password, passwordConfirm }: SignupReqDto): Promise<SignupResDto> {
     if (password !== passwordConfirm) throw new BadRequestException();
-    const { id, accessToken, refreshToken } = await this.authService.singup(email, password);
+    const { id, accessToken, refreshToken } = await this.authService.signup(email, password);
 
     return { id, accessToken, refreshToken };
   }

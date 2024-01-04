@@ -1,24 +1,17 @@
 import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import jwtConfig from './config/jwt.config';
+import postgresConfig from './config/postgres.config';
+import swaggerConfig from './config/swagger.config';
 import { UserModule } from './user/user.module';
 import { VideoModule } from './video/video.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import postgresConfig from './config/postgres.config';
-import jwtConfig from './config/jwt.config';
-import swaggerConfig from './config/swagger.config';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
 
 @Module({
-  providers: [Logger],
   imports: [
-    AuthModule,
-    UserModule,
-    VideoModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [postgresConfig, jwtConfig, swaggerConfig],
-    }),
+    ConfigModule.forRoot({ isGlobal: true, load: [postgresConfig, jwtConfig, swaggerConfig] }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
@@ -32,12 +25,17 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
           autoLoadEntities: true,
           synchronize: false,
         };
+        // 주의! local 환경에서만 개발 편의성을 위해 활용
         if (configService.get('STAGE') === 'local') obj = Object.assign(obj, { logging: true, synchronize: true });
 
         return obj;
       },
     }),
+    AuthModule,
+    UserModule,
+    VideoModule,
   ],
+  providers: [Logger],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
-import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { UserService } from '../user/user.service';
 import { RefreshToken } from './entity/refresh-token.entity';
 
 @Injectable()
@@ -11,10 +11,11 @@ export class AuthService {
     private dataSource: DataSource,
     private userService: UserService,
     private jwtService: JwtService,
-    @InjectRepository(RefreshToken) private refreshTokenRepository: Repository<RefreshToken>,
+    @InjectRepository(RefreshToken)
+    private refreshTokenRepository: Repository<RefreshToken>,
   ) {}
 
-  async singup(email: string, password: string) {
+  async signup(email: string, password: string) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -23,11 +24,9 @@ export class AuthService {
     try {
       const userId = await this.userService.findOneByEmail(email);
       if (userId) throw new BadRequestException();
-
       const newUserId = await this.userService.create(email, password);
-      const accessToken = this.generateAccessToken(newUserId);
-      const refreshTokenEntity = queryRunner.manager.create(RefreshToken, { userId: newUserId, token: this.generateRefreshToken(newUserId) });
-
+      const accessToken = this.genereateAccessToken(newUserId);
+      const refreshTokenEntity = queryRunner.manager.create(RefreshToken, { userId: newUserId, token: this.genereateRefreshToken(newUserId) });
       queryRunner.manager.save(refreshTokenEntity);
       await queryRunner.commitTransaction();
 
@@ -45,40 +44,36 @@ export class AuthService {
   async signin(email: string, password: string) {
     const userId = await this.userService.validateUser(email, password);
 
-    const refreshToken = this.generateRefreshToken(userId);
+    const refreshToken = this.genereateRefreshToken(userId);
     await this.createRefreshTokenUsingUser(userId, refreshToken);
-
-    return { accessToken: this.generateAccessToken(userId), refreshToken };
+    return { accessToken: this.genereateAccessToken(userId), refreshToken };
   }
 
   async refresh(token: string, userId: string) {
-    const refreshTokenEntity = await this.refreshTokenRepository.findOneBy({ token });
+    const refreshTokenEntity = await this.refreshTokenRepository.findOneBy({
+      token,
+    });
     if (!refreshTokenEntity) throw new BadRequestException();
-
-    const accessToken = this.generateAccessToken(userId);
-    const refreshToken = this.generateRefreshToken(userId);
+    const accessToken = this.genereateAccessToken(userId);
+    const refreshToken = this.genereateRefreshToken(userId);
     refreshTokenEntity.token = refreshToken;
-
     await this.refreshTokenRepository.save(refreshTokenEntity);
 
     return { accessToken, refreshToken };
   }
 
-  private generateAccessToken(userId: string) {
+  private genereateAccessToken(userId: string) {
     const payload = { sub: userId, tokenType: 'access' };
-
     return this.jwtService.sign(payload, { expiresIn: '1d' });
   }
 
-  private generateRefreshToken(userId: string) {
+  private genereateRefreshToken(userId: string) {
     const payload = { sub: userId, tokenType: 'refresh' };
-
     return this.jwtService.sign(payload, { expiresIn: '30d' });
   }
 
   private async createRefreshTokenUsingUser(userId: string, refreshToken: string) {
     let refreshTokenEntity = await this.refreshTokenRepository.findOneBy({ userId });
-
     if (refreshTokenEntity) refreshTokenEntity.token = refreshToken;
     else refreshTokenEntity = this.refreshTokenRepository.create({ userId, token: refreshToken });
 

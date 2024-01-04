@@ -4,10 +4,9 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 import { IS_PUBLIC_KEY } from '../common/decorator/public.decorator';
-import { Request } from 'express';
 import { ROLES_KEY } from '../common/decorator/role.decorator';
-import { UserService } from '../user/user.service';
 import { Role } from '../user/enum/user.enum';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -35,10 +34,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (!token) throw new UnauthorizedException('accessToken is required');
 
     const decoded = this.jwtService.decode(token);
-    if (url !== 'api/auth/refresh' && decoded['tokenType'] === 'refresh') {
+    if (url !== '/api/auth/refresh' && decoded['tokenType'] === 'refresh') {
       const error = new UnauthorizedException('accessToken is required');
       this.logger.error(error.message, error.stack);
-
       throw error;
     }
 
@@ -49,6 +47,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       return this.userService.checkUserIsAdmin(userId);
     }
 
-    return this.canActivate(context);
+    return super.canActivate(context);
   }
 }

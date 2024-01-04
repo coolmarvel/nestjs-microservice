@@ -4,9 +4,11 @@ WORKDIR /usr/src/app
 
 RUN npm install -g @nestjs/cli
 
+# Copy application dependency manifests to the container image.
+# Copying this first prevents re-running npm install on every code change.
 COPY package*.json ./
 
 COPY . .
 
 CMD yarn install && \
-    nest start --watch
+  nest start user --watch

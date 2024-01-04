@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { AnalyticsService } from './analytics.service';
 import { Ctx, EventPattern, KafkaContext, Payload } from '@nestjs/microservices';
 
-@Controller('analytics')
+@Controller()
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 

@@ -7,11 +7,11 @@ export class SignupReqDto {
   @MaxLength(30)
   email: string;
 
-  @ApiProperty({ required: true, example: 'Password!@34' })
+  @ApiProperty({ required: true, example: 'Password1!' })
   @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{10,30}$/)
   password: string;
 
-  @ApiProperty({ required: true, example: 'Password!@34' })
+  @ApiProperty({ required: true, example: 'Password1!' })
   @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{10,30}$/)
   passwordConfirm: string;
 }
@@ -22,7 +22,7 @@ export class SigninReqDto {
   @MaxLength(30)
   email: string;
 
-  @ApiProperty({ required: true, example: 'Password1@34' })
+  @ApiProperty({ required: true, example: 'Password1!' })
   @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{10,30}$/)
   password: string;
 }

@@ -16,7 +16,7 @@ export class Video {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-  
+
   @Column()
   userId: string;
 }

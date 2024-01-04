@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
-import { VideoModule } from './video/video.module';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import postgresConfig from './video/config/postgres.config';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { VideoModule } from './video/video.module';
 
 @Module({
   imports: [
-    VideoModule,
-    ConfigModule.forRoot({ isGlobal: true, load: [postgresConfig] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [postgresConfig],
+    }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
@@ -21,11 +23,13 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
           autoLoadEntities: true,
           synchronize: false,
         };
+        // 주의! local 환경에서만 개발 편의성을 위해 활용
         if (configService.get('STAGE') === 'local') obj = Object.assign(obj, { logging: true, synchronize: true });
 
         return obj;
       },
     }),
+    VideoModule,
   ],
 })
 export class AppModule {}

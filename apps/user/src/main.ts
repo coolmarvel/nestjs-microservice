@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
@@ -10,4 +10,5 @@ async function bootstrap() {
   await app.listen();
   console.info(`user-service listening on 3001 for TCP`);
 }
+
 bootstrap();

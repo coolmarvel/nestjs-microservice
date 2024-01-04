@@ -9,7 +9,10 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
     {
       provide: 'USER_SERVICE',
       useFactory: () => {
-        return ClientProxyFactory.create({ transport: Transport.TCP, options: { host: 'user-service', port: 3001 } });
+        return ClientProxyFactory.create({
+          transport: Transport.TCP,
+          options: { host: 'user-service', port: 3001 },
+        });
       },
     },
   ],

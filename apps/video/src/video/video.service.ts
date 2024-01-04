@@ -1,10 +1,10 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Video } from './entity/video.entity';
-import { ClientProxy } from '@nestjs/microservices';
 import { join } from 'path';
 import { readFile, stat, writeFile } from 'fs/promises';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class VideoService {
@@ -21,7 +21,6 @@ export class VideoService {
     let error: any;
     try {
       const video = await queryRunner.manager.save(queryRunner.manager.create(Video, { title, mimetype, userId }));
-
       await this.uploadVideo(video.id, extension, buffer);
       await queryRunner.commitTransaction();
 
@@ -37,7 +36,7 @@ export class VideoService {
 
   async download(id: string): Promise<{ buffer: Buffer; mimetype: string; size: number }> {
     const video = await this.videoRepository.findOneBy({ id });
-    if (!video) throw new NotFoundException('No Video');
+    if (!video) throw new NotFoundException('No video');
 
     const { mimetype } = video;
     const extension = mimetype.split('/')[1];
@@ -52,7 +51,6 @@ export class VideoService {
 
   private async uploadVideo(id: string, extension: string, buffer: Buffer) {
     const filePath = join(process.cwd(), 'video-storage', `${id}.${extension}`);
-
     await writeFile(filePath, Buffer.from(buffer));
   }
 }

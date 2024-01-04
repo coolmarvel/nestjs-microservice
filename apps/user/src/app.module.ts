@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './user/user.module';
+import { UserController } from './user/user.controller';
+import { UserService } from './user/user.service';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import postgresConfig from './user/config/postgres.config';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
-    UserModule,
     ConfigModule.forRoot({ isGlobal: true, load: [postgresConfig] }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
@@ -21,11 +22,13 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
           autoLoadEntities: true,
           synchronize: false,
         };
+        // 주의! local 환경에서만 개발 편의성을 위해 활용
         if (configService.get('STAGE') === 'local') obj = Object.assign(obj, { logging: true, synchronize: true });
 
         return obj;
       },
     }),
+    UserModule,
   ],
 })
 export class AppModule {}

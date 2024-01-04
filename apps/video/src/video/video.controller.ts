@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
-import { VideoService } from './video.service';
 import { MessagePattern } from '@nestjs/microservices';
+import { VideoService } from './video.service';
 
 @Controller()
 export class VideoController {
@@ -21,7 +21,7 @@ export class VideoController {
     buffer: { type: 'buffer'; data: number[] };
   }): Promise<{ id: string }> {
     const video = await this.videoService.upload(userId, title, mimetype, extension, Buffer.from(buffer.data));
-
+    
     return { id: video.id };
   }
 

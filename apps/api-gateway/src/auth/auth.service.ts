@@ -22,8 +22,9 @@ export class AuthService {
 
     let error: any;
     try {
-      const userId = await this.userService.findOneByEmail(email);
-      if (userId) throw new BadRequestException();
+      const user = await this.userService.findOneByEmail(email);
+      if (user) throw new BadRequestException();
+
       const newUserId = await this.userService.create(email, password);
       const accessToken = this.genereateAccessToken(newUserId);
       const refreshTokenEntity = queryRunner.manager.create(RefreshToken, { userId: newUserId, token: this.genereateRefreshToken(newUserId) });

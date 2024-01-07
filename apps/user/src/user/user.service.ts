@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Role } from './entity/user.enum';
 
 @Injectable()
 export class UserService {
@@ -31,5 +32,11 @@ export class UserService {
     if (!isMatch) throw new UnauthorizedException();
 
     return user;
+  }
+
+  async checkUserIsAdmin(uuid: string) {
+    const user = await this.userRepository.findOneBy({ id: uuid });
+
+    return { id: user.role === Role.Admin };
   }
 }

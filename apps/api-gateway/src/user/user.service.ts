@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
@@ -32,7 +33,11 @@ export class UserService {
   }
 
   // TODO
-  async checkUserIsAdmin(id: string) {
-    return true;
+  async checkUserIsAdmin(uuid: string) {
+    const pattern = { cmd: 'checkUserIsAdmin' };
+    const payload = { uuid };
+    const { id } = await firstValueFrom<{ id: string }>(this.client.send<{ id: string }>(pattern, payload));
+
+    return Boolean(id);
   }
 }

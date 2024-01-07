@@ -23,7 +23,14 @@ export class UserController {
   @MessagePattern({ cmd: 'validate' })
   async validate({ email, password }: { email: string; password: string }): Promise<{ id: string }> {
     const { id } = await this.userService.validate(email, password);
-    
+
+    return { id };
+  }
+
+  @MessagePattern({ cmd: 'checkUserIsAdmin' })
+  async checkUserIsAdmin(uuid: string): Promise<{ id: boolean }> {
+    const { id } = await this.userService.checkUserIsAdmin(uuid);
+
     return { id };
   }
 }

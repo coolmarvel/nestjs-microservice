@@ -1,19 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { AnalyticsService } from './analytics.service';
-import { Ctx, EventPattern, KafkaContext, Payload } from '@nestjs/microservices';
+import { EventPattern, Payload } from '@nestjs/microservices';
 
 @Controller()
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
-  @Get()
-  getHello(): string {
-    return this.analyticsService.getHello();
-  }
-
   @EventPattern('video_downloaded')
-  async handleVideoDownloaded(@Payload() message: any, @Ctx() context: KafkaContext) {
+  async handleVideoDownloaded(@Payload() message: any) {
     console.log(message);
-    console.log(`Topic: ${context.getTopic()}`);
+    this.analyticsService.updateVideoDownloadCnt(message.id);
   }
 }
